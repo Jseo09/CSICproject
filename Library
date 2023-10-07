@@ -1,0 +1,203 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.io.*;
+
+public class Library {
+    // Add the missing implementation to this class
+    private final String ADDRESS;
+    private ArrayList<Book> books = new ArrayList<Book>();
+    private ArrayList<Book> borrowed_books = new ArrayList<Book>();
+
+
+    public Library(String address) {
+        this.ADDRESS = address;
+    }
+
+    public void addBook(Book book) {
+        books.add(book);
+    }
+
+    public int get_count(String bookTitle) {
+        int count = 0;
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).getTitle().equals(bookTitle)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private void borrowBook(String bookTitle) {
+        boolean find = false;
+        int count = get_count(bookTitle);
+        for (int i = 0; i < books.size(); i++) {
+            count = get_count(bookTitle);
+            if (books.get(i).getTitle().equals(bookTitle)) {
+                count--;
+                if (count == 0) {
+                    count = 0;
+                    borrowed_books.add(books.get(i));
+                }
+                find = true;
+                books.remove(i);
+                break;
+            }
+        }
+        if (find)
+            System.out.println("You successfully borrowed " + bookTitle + ", remaining copies are " + count);
+        else {
+            Boolean borrowed = false;
+            for (int i = 0; i < borrowed_books.size(); i++) {
+                if (borrowed_books.get(i).getTitle().equals(bookTitle)) {
+                    borrowed = true;
+                    break;
+                } else
+                    borrowed = false;
+            }
+            if (borrowed)
+                System.out.println("No more books are available.");
+            else {
+                System.out.println("No book in Catalog");
+            }
+        }
+    }
+
+    private void printAvailableBooks() {
+        ArrayList<String> used = new ArrayList<String>();
+        for (int i = 0; i < this.books.size(); i++) {
+            int count = get_count(books.get(i).getTitle());
+            if (!used.contains(books.get(i).getTitle())) {
+                used.add(books.get(i).getTitle());
+                System.out.println(books.get(i).getTitle() + ", remaining numbers of copies : " + count);
+
+            }
+        }
+        if (!this.borrowed_books.isEmpty()) {
+            for (int i = 0; i < this.borrowed_books.size(); i++) {
+                System.out.println(borrowed_books.get(i).getTitle() + ", remaining numbers of copies : " + 0);
+            }
+        }
+        if (used.isEmpty())
+            System.out.println("No book in catalog");
+    }
+
+    public static void printOpeningHours() {
+        System.out.println("Libraries are open daily from 9am to 5pm.\n");
+    }
+
+    public void returnBook(String bookTitle) {
+        int count = 0;
+        Boolean found = false;
+        Book newBook = new Book(bookTitle);
+        books.add(newBook);
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).getTitle().equals(bookTitle)) {
+                count++;
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            for (int i = 0; i < borrowed_books.size(); i++) {
+                if (bookTitle.equals(borrowed_books.get(i).getTitle())) {
+                    borrowed_books.remove(i);
+                }
+            }
+        }
+        System.out.println("Returning " + bookTitle);
+        System.out.println("You successfully returned the book. The current copies of the books are : " + count);
+    }
+    private List<String[]> readCSV(String filename) {
+        List<String[]> data = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            //when they did not finish reading the line
+            while ((line = br.readLine()) != null) {
+                // Split the line into an array of values using a comma as the delimiter
+                String[] values = line.split(",");
+                data.add(values);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+// This part, we can edit and change later. Got this csv import method from chatGPT
+    public void addBooksFromCSV(String fileDirectory) {
+        List<String[]> csvData = readCSV(fileDirectory);
+
+        for (String[] row : csvData) {
+            if (row.length >= 2) {
+                String bookTitle = row[0];
+                int count = Integer.parseInt(row[1]);
+
+                // Create a Book object and add it to the library
+                for (int i = 0; i < count; i++) {
+                    Book book = new Book(bookTitle);
+                    addBook(book);
+                }
+            }
+        }
+    }
+
+    public void printAddress() {
+        System.out.println(ADDRESS);
+    }
+
+    public static void main(String[] args) {
+        // Create two libraries
+
+        System.out.println();
+        Library firstLibrary = new Library("10 Main St.");
+        Library secondLibrary = new Library("228 Liberty St.");
+        Library thirdLibrary = new Library("12 Broadway St.");
+        // Add four books to the first library
+        firstLibrary.addBook(new Book("The Da Vinci Code"));
+        firstLibrary.addBook(new Book("The Da Vinci Code")); // second copy
+        firstLibrary.addBook(new Book("The Da Vinci Code")); // second copy
+
+        firstLibrary.addBook(new Book("Le Petit Prince"));
+        firstLibrary.addBook(new Book("A Tale of Two Cities"));
+        firstLibrary.addBook(new Book("The Lord of the Rings"));
+        firstLibrary.addBook(new Book("The Lord of the Rings")); // second copy
+
+        thirdLibrary.addBooksFromCSV("C:/Users/seoji/IdeaProjects/School/src/catalog.csv/");
+        // Print opening hours and the addresses
+        System.out.println("Library hours:");
+        printOpeningHours();
+        System.out.println();
+        System.out.println("Library addresses:");
+        firstLibrary.printAddress();
+        secondLibrary.printAddress();
+        System.out.println();
+
+        // Try to borrow The Lords of the Rings from both libraries
+        System.out.println("Borrowing The Lord of the Rings:");
+        firstLibrary.borrowBook("The Lord of the Rings");
+        firstLibrary.borrowBook("The Lord of the Rings");
+        firstLibrary.borrowBook("The Lord of the Rings");
+        thirdLibrary.borrowBook("Renewing Meaning");
+        System.out.println();
+
+        // Print the titles of all available books from both libraries
+        System.out.println("Books available in the first library:");
+        firstLibrary.printAvailableBooks();
+        System.out.println();
+        System.out.println("Books available in the second library:");
+        secondLibrary.printAvailableBooks();
+        System.out.println("Books available in the third library:");
+        thirdLibrary.printAvailableBooks();
+        System.out.println();
+
+        // Return The Lords of the Rings to the first library
+        firstLibrary.returnBook("The Lord of the Rings");
+        System.out.println();
+        thirdLibrary.returnBook("Renewing Meaning");
+        // Print the titles of available from the first library
+        System.out.println("Books available in the first library:");
+        firstLibrary.printAvailableBooks();
+        thirdLibrary.printAvailableBooks();
+    }
+
+
+}

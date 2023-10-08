@@ -6,21 +6,22 @@ public class Library {
     private final String ADDRESS;
     private ArrayList<Book> books = new ArrayList<Book>();
 
-    //Constructor
+
     public Library(String address) {
         this.ADDRESS = address;
     }
-    //method for adding the books. For to do this, need to use constructor to create the Library
+
     public void addBook(Book book) {
         books.add(book);
     }
 
-    //method to get the count of the books that are available to borrow. 
     private int get_count(String bookTitle) {
         int count = 0;
+
         for (int i = 0; i < books.size(); i++) {
-            if (books.get(i).getTitle().equals(bookTitle)) {
-                if (!books.get(i).borrowed == true) {
+            Book book = books.get(i);
+            if (book.getTitle().equals(bookTitle)) {
+                if (!book.borrowed == true) {
                     count++;
                 }
             }
@@ -28,17 +29,18 @@ public class Library {
         return count;
     }
 
-    // borrows the book from the book lists
     public void borrowBook(String bookTitle) {
         boolean find = false;
         boolean borrowed = false;
+        
         int count = get_count(bookTitle);
         for (int i = 0; i < books.size(); i++) {
+            Book book = books.get(i);
             count = get_count(bookTitle);
-            if (books.get(i).getTitle().equals(bookTitle) && books.get(i).borrowed == false) {
+            if (book.getTitle().equals(bookTitle) && book.borrowed == false) {
                 count--;
                 find = true;
-                books.get(i).rent(books.get(i));
+                book.rent(books.get(i));
                 break;
             }
         }
@@ -46,7 +48,8 @@ public class Library {
             System.out.println("You successfully borrowed " + bookTitle + ", remaining copies are " + count);
         else {
             for(int i = 0; i< books.size(); i++){
-                if (books.get(i).getTitle().equals(bookTitle) && books.get(i).borrowed == true)
+                Book book = books.get(i);
+                if (book.getTitle().equals(bookTitle) && book.borrowed == true)
                     borrowed = true;
             }
             if (borrowed)
@@ -60,10 +63,11 @@ public class Library {
     public void printAvailableBooks() {
         ArrayList<String> used = new ArrayList<String>();
         for (int i = 0; i < this.books.size(); i++) {
-            int count = get_count(books.get(i).getTitle());
-            if (!used.contains(books.get(i).getTitle())) {
-                used.add(books.get(i).getTitle());
-                System.out.println(books.get(i).getTitle() + ", remaining numbers of copies : " + count);
+            Book book = books.get(i);
+            int count = get_count(book.getTitle());
+            if (!used.contains(book.getTitle())) {
+                used.add(book.getTitle());
+                System.out.println(book.getTitle() + ", remaining numbers of copies : " + count);
             }
         }
         if (used.isEmpty())
@@ -79,9 +83,10 @@ public class Library {
     public void returnBook(String bookTitle) {
         int count = 0;
         for (int i = 0; i < books.size(); i++) {
-            if (books.get(i).getTitle().equals(bookTitle) && books.get(i).isBorrowed() == true) {
+            Book book = books.get(i);
+            if (book.getTitle().equals(bookTitle) && book.isBorrowed() == true) {
                     count++;
-                    books.get(i).returned(books.get(i));
+                    book.returned(book);
 
                     System.out.println("Returning " + bookTitle);
                     System.out.println("You successfully returned the book. The current copies of the books are : " + count);

@@ -6,15 +6,16 @@ public class Library {
     private final String ADDRESS;
     private ArrayList<Book> books = new ArrayList<Book>();
 
-
+    //Constructor
     public Library(String address) {
         this.ADDRESS = address;
     }
-
+    //method for adding the books. For to do this, need to use constructor to create the Library
     public void addBook(Book book) {
         books.add(book);
     }
 
+    //method to get the count of the books that are available to borrow. 
     private int get_count(String bookTitle) {
         int count = 0;
         for (int i = 0; i < books.size(); i++) {
@@ -27,6 +28,7 @@ public class Library {
         return count;
     }
 
+    // borrows the book from the book lists
     public void borrowBook(String bookTitle) {
         boolean find = false;
         boolean borrowed = false;

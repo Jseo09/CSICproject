@@ -10,7 +10,7 @@
   - Created the base of the project
     - Created the classes for the following:
       - Library
-        - Created the method for borrowing and renting the books [x]
+        - Created the method for borrowing and renting the books [x ]
         - Created the method for adding the books [x]
         - Created the method for the print available books at specific libraries [x]
         - Printing addresses[x]

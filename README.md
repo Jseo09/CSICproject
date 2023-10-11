@@ -1,3 +1,10 @@
 # CSICproject
-# Contributor: (h1)
-Jin Seo, Hayden Sutton, Juliet Udeh 
+## Contributors:
+- Hayden Sutton
+- Juliet Udeh
+- Jin Seo
+### Tasks
+- Hayden Sutton
+- Juliet Udeh
+- Jin Seo
+*  hi

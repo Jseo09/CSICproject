@@ -2,6 +2,7 @@ public class Execution {
     public static void printOpeningHours() {
         System.out.println("Libraries are open daily from 9am to 5pm.\n");
     }
+
     public static void main(String[] args) {
         // Create two libraries
         System.out.println();
@@ -24,6 +25,7 @@ public class Execution {
         System.out.println("Library hours:");
         printOpeningHours();
         System.out.println();
+
         System.out.println("Library addresses:");
         firstLibrary.printAddress();
         secondLibrary.printAddress();
@@ -50,9 +52,9 @@ public class Execution {
         // Return The Lords of the Rings to the first library
         firstLibrary.returnBook("The Lord of the Rings");
         System.out.println();
+
         // Print the titles of available from the first library
         System.out.println("Books available in the first library:");
         firstLibrary.printAvailableBooks();
     }
-
 }

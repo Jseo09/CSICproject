@@ -18,7 +18,8 @@
           - CSV
             - Added print statement to let users know in case an error occurs while reading catalog file.
         - In Boook Class:
-          - provided code to initialize our borrowed field to false. 
+          - provided code to initialize our borrowed field to false.
+          
 - Jin Seo 
   - Created the base of the project
     - Created the classes for the following:

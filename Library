@@ -17,7 +17,6 @@ public class Library {
 
     private int get_count(String bookTitle) {
         int count = 0;
-
         for (Book book : books) {
             if (book.getTitle().equals(bookTitle)) {
                 if (!book.borrowed) {
@@ -31,8 +30,7 @@ public class Library {
     public void borrowBook(String bookTitle) {
         boolean find = false;
         boolean borrowed = false;
-
-        int count = get_count(bookTitle);
+        int count = -1;
         for (Book book : books) {
             count = get_count(bookTitle);
             if (book.getTitle().equals(bookTitle) && !book.borrowed) {
@@ -71,7 +69,7 @@ public class Library {
         if (used.isEmpty())
             System.out.println("No book in catalog");
     }
-    
+
     public void printAddress() {
         System.out.println(ADDRESS);
     }
@@ -94,6 +92,7 @@ public class Library {
     //From ChatGPT to import CSV file into the java file
     private List<String[]> readCSV(String filename) {
         List<String[]> data = new ArrayList<>();
+        //reads each line of the CSV file using BufferReader
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             //when they did not finish reading the line
@@ -102,6 +101,7 @@ public class Library {
                 String[] values = line.split(",");
                 data.add(values);
             }
+            //catch the exceptions, and print the error if it happens
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,14 +109,15 @@ public class Library {
     }
 
     public void addBooksFromCSV(String fileDirectory) {
+        //get the data from the method redCSV, and create list out of it
         List<String[]> csvData = readCSV(fileDirectory);
 
         for (String[] row : csvData) {
             if (row.length >= 2) {
                 String bookTitle = row[0];
+                //parse the integer
                 int count = Integer.parseInt(row[1]);
 
-                // Create a Book object and add it to the library
                 for (int i = 0; i < count; i++) {
                     Book book = new Book(bookTitle);
                     addBook(book);
@@ -124,8 +125,6 @@ public class Library {
             }
         }
     }
-
-
 }
 
 class Execution {
@@ -148,7 +147,8 @@ class Execution {
         firstLibrary.addBook(new Book("The Lord of the Rings"));
         firstLibrary.addBook(new Book("The Lord of the Rings")); // second copy
 
-        //* Change this directory since the file directory depends on csv file locations*
+        //!!!!IMPORTANT!!!!
+        //Change this directory since the file directory depends on csv file locations*
         thirdLibrary.addBooksFromCSV("C:/Users/seoji/IdeaProjects/School/src/catalog.csv/");
 
         // Print opening hours and the addresses

@@ -30,7 +30,7 @@
         - Printing addresses
         - Method for importing the CSV file
         - Created the class and most of its codes
-      -** Books**
+      - **Books**
         - methods for checking if the books are rented or not and getting the title
         - Created the book class and its code
 

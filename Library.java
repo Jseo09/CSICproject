@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
-
 public class Library {
     private final String ADDRESS;
-    private final ArrayList<Book> books = new ArrayList<>();
+    private ArrayList<Book> books = new ArrayList<>();
+
 
 
     public Library(String address) {
@@ -125,9 +125,7 @@ public class Library {
             }
         }
     }
-}
 
-class Execution {
     public static void printOpeningHours() {
         System.out.println("Libraries are open daily from 9am to 5pm.\n");
     }
@@ -146,7 +144,6 @@ class Execution {
         firstLibrary.addBook(new Book("A Tale of Two Cities"));
         firstLibrary.addBook(new Book("The Lord of the Rings"));
         firstLibrary.addBook(new Book("The Lord of the Rings")); // second copy
-
         //!!!!IMPORTANT!!!!
         //Change this directory since the file directory depends on csv file locations*
         thirdLibrary.addBooksFromCSV("C:/Users/seoji/IdeaProjects/School/src/catalog.csv/");

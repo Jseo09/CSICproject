@@ -21,15 +21,17 @@
           - provided code to initialize our borrowed field to false.
           
 - Jin Seo 
-  - Created the base of the project
+  - Created the base of the project and logics of the methods
     - Created the classes for the following:
       - **Library**
-        - Created the method for borrowing and renting the books 
-        - Created the method for adding the books 
-        - Created the method for the print available books at specific libraries 
+        - Created the method for borrowing and renting the books and its logics
+        - Created the method for adding the books and its logics
+        - Created the method for printing available books at specific libraries and its logic
         - Printing addresses
-        - Method for importing the CSV file 
+        - Method for importing the CSV file
+        - Created the class and most of its codes
       -** Books**
-        - methods for checking if the books are rented or not and getting the title 
-      - **Execution**
-        - Copied and pasted the main method from the blackboard and did not change it 
+        - methods for checking if the books are rented or not and getting the title
+        - Created the book class and its code
+
+      

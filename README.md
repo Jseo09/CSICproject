@@ -29,7 +29,7 @@
         - Created the method for printing available books at specific libraries and its logic
         - Printing addresses
         - Method for importing the CSV file
-        - Created the class and most of its codes
+        - Created the class and its logics for the future changes
       - **Books**
         - methods for checking if the books are rented or not and getting the title
         - Created the book class and its code

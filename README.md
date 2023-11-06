@@ -7,12 +7,13 @@
 - Hayden Sutton
    - Made updates to the borrowing books classes
    - Created some updates using the feedback given
+           - cleaned the codes and created more less-complexed codes
    - Updated the code for easier reading and efficiency 
 - Juliet Udeh
   - Built on what Jin had.
   - Provided changes to the logic of our methods to ensure code efficiency and readability.
   - Provided comments to the code.
-     - Provided Logic for the following methods:
+     - Provided logics for the efficiency of the following methods:
        - In Library Class:
           - getCount
           - borrowBook
@@ -29,7 +30,7 @@
       - **Library**
         - Created the method for borrowing and renting the books and its logics
         - Created the method for adding the books and its logics
-        - Created the method for printing available books at specific libraries and its logic
+        - Created the method for printing available books at specific libraries and its logics
         - Printing addresses
         - Method for importing the CSV file
         - Created the class and its logics for the future changes

@@ -16,46 +16,45 @@ public class Library {
     }
 
     private int get_count(String bookTitle) {
-        int count = 0;
+    int count = 0;
+    for (Book book : books) {
+        if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
+            count++;
+        }
+    }
+    return count;
+}
+
+public void borrowBook(String bookTitle) {
+    boolean borrowed = false;
+    boolean find = false;
+    int count = get_count(bookTitle);
+    for (Book book : books) {
+        if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
+            find = true;
+            book.rent();
+            count--;
+            break;
+        }
+    }
+    if (find)
+        System.out.println("You successfully borrowed " + bookTitle + ", remaining copies are " + count);
+    else {
         for (Book book : books) {
             if (book.getTitle().equals(bookTitle)) {
-                if (!book.borrowed) {
-                    count++;
+                borrowed = book.isBorrowed();
+                if(borrowed){
+                    break; // This ensures the borrowed variable reflects the correct status
                 }
             }
         }
-        return count;
-    }
-
-    public void borrowBook(String bookTitle) {
-        boolean find = false;
-        boolean borrowed = false;
-        int count = -1;
-        for (Book book : books) {
-            count = get_count(bookTitle);
-            if (book.getTitle().equals(bookTitle) && !book.borrowed) {
-                count--;
-                find = true;
-                book.rent(book);
-                break;
-            }
-        }
-        if (find)
-            System.out.println("You successfully borrowed " + bookTitle + ", remaining copies are " + count);
+        if (borrowed)
+            System.out.println("Sorry, this book is already borrowed.");
         else {
-            for (Book book : books) {
-                if (book.getTitle().equals(bookTitle) && book.borrowed) {
-                    borrowed = true;
-                    break;
-                }
-            }
-            if (borrowed)
-                System.out.println("No more books are available.");
-            else {
-                System.out.println("No book in Catalog");
-            }
+            System.out.println("The book you attempted to borrow is not in our catalog.");
         }
     }
+}
 
     public void printAvailableBooks() {
         ArrayList<String> used = new ArrayList<>();
@@ -75,17 +74,21 @@ public class Library {
     }
 
     public void returnBook(String bookTitle) {
-        int count = 0;
-        for (Book book : books) {
-            if (book.getTitle().equals(bookTitle) && book.isBorrowed()) {
-                count++;
-                book.returned(book);
-
-                System.out.println("Returning " + bookTitle);
-                System.out.println("You successfully returned the book. The current copies of the books are : " + count);
-                break;
-            }
+    boolean isReturned = false;
+    for (Book book : books) {
+        if (book.getTitle().equals(bookTitle) && book.isBorrowed()) {
+            book.returned();
+            isReturned = true;
+            System.out.println("Returning " + bookTitle);
+            break;
         }
+    }
+    if (isReturned) {
+        int currentCount = get_count(bookTitle); // Get the updated count after returning
+        System.out.println("You successfully returned the book. The current copies of the books are : " + currentCount);
+    } else {
+        System.out.println("Book was not borrowed or is not in the catalog.");
+    }
 
     }
 

@@ -4,16 +4,20 @@ public class Book {
     public Book(String title){
         this.title = title;
     }
-    public void rented(Book books){
+    //Changes the book variable to it has been rented
+    public void rent(Book books){
         books.borrowed = true;
     }
-
+    //Changes the book variable to it has been returned to the library
+    //Renting and returning is for keeping the count of the books that is available in the specific library
     public void returned(Book books){
         books.borrowed = false;
     }
+    //checks if the book has been borrowed or not
     public boolean isBorrowed(){
         return this.borrowed;
     }
+    //the method to get the title of the book
     public String getTitle(){
         return this.title;
     }
@@ -24,5 +28,4 @@ public class Book {
         System.out.println("Borrowed? (should be true): " + example.isBorrowed());
         System.out.println("Borrowed? (should be false): " + example.isBorrowed());
     }
-
 }

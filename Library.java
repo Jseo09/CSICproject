@@ -1,20 +1,30 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
+
 public class Library {
     private final String ADDRESS;
     private ArrayList<Book> books = new ArrayList<>();
 
-
-
     public Library(String address) {
         this.ADDRESS = address;
+    }
+
+    public Library(String address, String file_title) {
+        this.ADDRESS = address;
+        //!!!!IMPORTANT!!!!
+        //Change this directory since the file directory depends on csv file locations*
+        String file_directory = "out/production/Project_for_CSIC/" + file_title;
+        addBooksFromCSV(file_directory);
+
     }
 
     public void addBook(Book book) {
         books.add(book);
     }
 
+    /*this is counting the books that is available
+    Example: The Lord of the Rings, remaining numbers of copies : 0 */
     private int get_count(String bookTitle) {
         int count = 0;
         for (Book book : books) {
@@ -25,11 +35,19 @@ public class Library {
         return count;
     }
 
+    //Method will borrow the book from the library
+    //Example:
+    // You successfully borrowed 'The Lord of the Rings', remaining copies are 1
+    //You successfully borrowed 'The Lord of the Rings', remaining copies are 0
     public void borrowBook(String bookTitle) {
         boolean borrowed = false;
         boolean find = false;
+        //this will receive the available book's counts
         int count = get_count(bookTitle);
+        //for the book in the books array this will get the books with the same title that has not been borrowed already
+        //If the books are founded, we set the find as true and set the founded book from the array as rented and break the loop
         for (Book book : books) {
+            //if the books with the same title nad
             if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
                 find = true;
                 book.rent(book);
@@ -37,34 +55,43 @@ public class Library {
                 break;
             }
         }
+        //this functions will show whether the books were successfully borrowed or not.
+        //If the book was not found as an available book, check if it is in the library by checking its title and state that
+        // it has been already borrowed and cannot borrow anymore.
+        //If it is not in the catalog, then it will print out that the book is not in the catalog
         if (find)
-            System.out.println("You successfully borrowed " + bookTitle + ", remaining copies are " + count);
+            System.out.println("You successfully borrowed " + "'" + bookTitle + "'" + ", remaining copies are " + count);
         else {
             for (Book book : books) {
                 if (book.getTitle().equals(bookTitle)) {
                     borrowed = book.isBorrowed();
-                    if(borrowed){
+                    if (borrowed) {
                         break; // This ensures the borrowed variable reflects the correct status
                     }
                 }
             }
             if (borrowed)
-                System.out.println("Sorry, this book is already borrowed.");
+                System.out.println("Sorry no more book, " + "'" + bookTitle + "'" + " is available at this moment");
             else {
-                System.out.println("The book you attempted to borrow is not in our catalog.");
+                System.out.println("The book " + "'" + bookTitle + "'" + " is not in our catalog.");
             }
         }
     }
 
+    //This will print the available books in the arraylist.
     public void printAvailableBooks() {
+        //this will keep the title of the books so when program print out the left over available book counts for specific book title,
         ArrayList<String> used = new ArrayList<>();
         for (Book book : this.books) {
+            //Get the available book counts
             int count = get_count(book.getTitle());
+            //if the book title is not duplicate, get the book title and put it with the count
             if (!used.contains(book.getTitle())) {
                 used.add(book.getTitle());
                 System.out.println(book.getTitle() + ", remaining numbers of copies : " + count);
             }
         }
+        //if there is no book, there is no book in catalog
         if (used.isEmpty())
             System.out.println("No book in catalog");
     }
@@ -73,6 +100,9 @@ public class Library {
         System.out.println(ADDRESS);
     }
 
+    //method to return the book to the library
+    //it checks the book title and for the every book object in the arraylist, they compare the title and given book title and check if they are borrowed or not
+    // if any of those books are borrowed, it allows the user to return the book since there is already book that has been borrowed
     public void returnBook(String bookTitle) {
         boolean isReturned = false;
         for (Book book : books) {
@@ -89,10 +119,10 @@ public class Library {
         } else {
             System.out.println("Book was not borrowed or is not in the catalog.");
         }
-
     }
-
     //From ChatGPT to import CSV file into the java file
+
+
     private List<String[]> readCSV(String filename) {
         List<String[]> data = new ArrayList<>();
         //reads each line of the CSV file using BufferReader
@@ -138,7 +168,7 @@ public class Library {
         System.out.println();
         Library firstLibrary = new Library("10 Main St.");
         Library secondLibrary = new Library("228 Liberty St.");
-        Library thirdLibrary = new Library("12 Broadway St.");
+        Library thirdLibrary = new Library("12 Broadway St.", "catalog.csv");
 
         // Add four books to the first library
         firstLibrary.addBook(new Book("The Da Vinci Code"));
@@ -147,9 +177,6 @@ public class Library {
         firstLibrary.addBook(new Book("A Tale of Two Cities"));
         firstLibrary.addBook(new Book("The Lord of the Rings"));
         firstLibrary.addBook(new Book("The Lord of the Rings")); // second copy
-        //!!!!IMPORTANT!!!!
-        //Change this directory since the file directory depends on csv file locations*
-        thirdLibrary.addBooksFromCSV("C:/Users/seoji/IdeaProjects/School/src/catalog.csv/");
 
         // Print opening hours and the addresses
         System.out.println("Library hours:");

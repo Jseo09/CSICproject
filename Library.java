@@ -16,45 +16,45 @@ public class Library {
     }
 
     private int get_count(String bookTitle) {
-    int count = 0;
-    for (Book book : books) {
-        if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
-            count++;
-        }
-    }
-    return count;
-}
-
-public void borrowBook(String bookTitle) {
-    boolean borrowed = false;
-    boolean find = false;
-    int count = get_count(bookTitle);
-    for (Book book : books) {
-        if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
-            find = true;
-            book.rent();
-            count--;
-            break;
-        }
-    }
-    if (find)
-        System.out.println("You successfully borrowed " + bookTitle + ", remaining copies are " + count);
-    else {
+        int count = 0;
         for (Book book : books) {
-            if (book.getTitle().equals(bookTitle)) {
-                borrowed = book.isBorrowed();
-                if(borrowed){
-                    break; // This ensures the borrowed variable reflects the correct status
-                }
+            if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
+                count++;
             }
         }
-        if (borrowed)
-            System.out.println("Sorry, this book is already borrowed.");
+        return count;
+    }
+
+    public void borrowBook(String bookTitle) {
+        boolean borrowed = false;
+        boolean find = false;
+        int count = get_count(bookTitle);
+        for (Book book : books) {
+            if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
+                find = true;
+                book.rent(book);
+                count--;
+                break;
+            }
+        }
+        if (find)
+            System.out.println("You successfully borrowed " + bookTitle + ", remaining copies are " + count);
         else {
-            System.out.println("The book you attempted to borrow is not in our catalog.");
+            for (Book book : books) {
+                if (book.getTitle().equals(bookTitle)) {
+                    borrowed = book.isBorrowed();
+                    if(borrowed){
+                        break; // This ensures the borrowed variable reflects the correct status
+                    }
+                }
+            }
+            if (borrowed)
+                System.out.println("Sorry, this book is already borrowed.");
+            else {
+                System.out.println("The book you attempted to borrow is not in our catalog.");
+            }
         }
     }
-}
 
     public void printAvailableBooks() {
         ArrayList<String> used = new ArrayList<>();
@@ -74,21 +74,21 @@ public void borrowBook(String bookTitle) {
     }
 
     public void returnBook(String bookTitle) {
-    boolean isReturned = false;
-    for (Book book : books) {
-        if (book.getTitle().equals(bookTitle) && book.isBorrowed()) {
-            book.returned();
-            isReturned = true;
-            System.out.println("Returning " + bookTitle);
-            break;
+        boolean isReturned = false;
+        for (Book book : books) {
+            if (book.getTitle().equals(bookTitle) && book.isBorrowed()) {
+                book.returned(book);
+                isReturned = true;
+                System.out.println("Returning " + bookTitle);
+                break;
+            }
         }
-    }
-    if (isReturned) {
-        int currentCount = get_count(bookTitle); // Get the updated count after returning
-        System.out.println("You successfully returned the book. The current copies of the books are : " + currentCount);
-    } else {
-        System.out.println("Book was not borrowed or is not in the catalog.");
-    }
+        if (isReturned) {
+            int currentCount = get_count(bookTitle); // Get the updated count after returning
+            System.out.println("You successfully returned the book. The current copies of the books are : " + currentCount);
+        } else {
+            System.out.println("Book was not borrowed or is not in the catalog.");
+        }
 
     }
 

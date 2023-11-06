@@ -5,6 +5,9 @@
 - Jin Seo
 ### Details:
 - Hayden Sutton
+   - Made updates to the borrowing books classes
+   - Created some updates using the feedback given
+   - Updated the code for easier reading and efficiency 
 - Juliet Udeh
   - Built on what Jin had.
   - Provided changes to the logic of our methods to ensure code efficiency and readability.

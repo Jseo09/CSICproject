@@ -35,10 +35,21 @@ public class Library {
         return count;
     }
 
-    //Method will borrow the book from the library
-    //Example:
-    // You successfully borrowed 'The Lord of the Rings', remaining copies are 1
-    //You successfully borrowed 'The Lord of the Rings', remaining copies are 0
+    /*
+    ---------------------------------------------------------------
+    AUTHOR:         JIN SEO
+    CREATED_DATE:   2023/10/25
+    PURPOSE:        Method will borrow the book from the library
+    PRECONDITIONS:  Must have at least one library object instanciated
+    POSTCONDITIONS: No Change
+    ARGUMENTS:      Requires String "Booktitle"  Can be NULL
+    DEPENDENCIES:   Method getCount
+
+    Example:
+    You successfully borrowed 'The Lord of the Rings', remaining copies are 1
+    You successfully borrowed 'The Lord of the Rings', remaining copies are 0
+    -----------------------------------------------------------------
+    */
     public void borrowBook(String bookTitle) {
         boolean borrowed = false;
         boolean find = false;
@@ -141,7 +152,7 @@ public class Library {
         return data;
     }
 
-    public void addBooksFromCSV(String fileDirectory) {
+    private void addBooksFromCSV(String fileDirectory) {
         //get the data from the method redCSV, and create list out of it
         List<String[]> csvData = readCSV(fileDirectory);
 

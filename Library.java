@@ -14,7 +14,7 @@ public class Library {
         this.ADDRESS = address;
         // !!!!IMPORTANT!!!!
         // Change this directory since the file directory depends on csv file locations*
-        String file_directory = "C:\\Users\\julie\\Downloads" + file_title;
+        String file_directory = "out/production/Project_for_CSIC/ " + file_title;
         addBooksFromCSV(file_directory);
 
     }

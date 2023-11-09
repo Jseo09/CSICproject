@@ -113,10 +113,23 @@ public class Library {
         System.out.println(ADDRESS);
     }
 
+
+    /*
+    ---------------------------------------------------------------
+    AUTHOR: Hayden Sutton
+    CREATED_DATE: 2023/11/05
+    PURPOSE: The method will return the borrowed book to the library
+    PRECONDITIONS: Must have at least one library object instantiated and an array of book objects
+    POSTCONDITIONS: Updates the status of the book object as returned and increments the count of available copies
+    ARGUMENTS: Requires String "bookTitle" which is the title of the book to return. Can be NULL.
+    DEPENDENCIES: Relies on method get_count to get the current count of books and whether the book is borrowed
+
+    Example:
+    Returning 'The Lord of the Rings'
+    You successfully returned the book, 'The Lord of the Rings.' The current copies of the book are: 2
+    ---------------------------------------------------------------
+    */
     //method to return the book to the library/
-    //it checks the book title and for the every book object in the arraylist, they compare the title and given book title and check if they are borrowed or not
-    // if any of those books are borrowed, it allows the user to return the book since there is already book that has been borrowed
-    // modified return book also
     public void returnBook(String bookTitle) {
         int[] counts = get_count(bookTitle);
         if (counts[0] < counts[1]) {
@@ -133,6 +146,25 @@ public class Library {
         }
     }
 
+
+    /*
+    ---------------------------------------------------------------
+    AUTHOR: [JIN SEO]
+    CREATED_DATE: 2023/10/25
+    PURPOSE: This method reads data from a CSV file containing a list of book titles and their respective number of copies, and returns it as a list of string arrays.
+    PRECONDITIONS: The CSV file must be in the correct format with two fields per line, the first being the book title and the second the number of copies.
+    POSTCONDITIONS: Produces a list where each element is a string array of two elements: the book title and the number of copies available.
+    ARGUMENTS: String "filename" which is the path to the CSV file containing the book inventory.
+    DEPENDENCIES: Relies on Java's IO classes for reading the file contents.
+
+    Example:
+    For a CSV file 'library_inventory.csv' with the content:
+    "The Countess of Huntingdon's Connexion",1
+    "Economic Organizations and Corporate Governance in Japan",2
+    The call readCSV("library_inventory.csv") will return:
+    [["The Countess of Huntingdon's Connexion", "1"], ["Economic Organizations and Corporate Governance in Japan", "2"]]
+    ---------------------------------------------------------------
+    */
     //From ChatGPT to import CSV file into the java file
     private List<String[]> readCSV(String filename) {
         List<String[]> data = new ArrayList<>();

@@ -158,7 +158,7 @@ public class Library {
     DEPENDENCIES: Relies on Java's IO classes for reading the file contents.
 
     Example:
-    For a CSV file 'library_inventory.csv' with the content:
+    For a CSV file 'CATALOG.csv' with the content:
     "The Countess of Huntingdon's Connexion",1
     "Economic Organizations and Corporate Governance in Japan",2
     The call readCSV("library_inventory.csv") will return:

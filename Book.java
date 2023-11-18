@@ -5,13 +5,13 @@ public class Book {
         this.title = title;
     }
     //Changes the book variable to it has been rented
-    public void rent(Book books){
-        books.borrowed = true;
+    public void rent(){
+        this.borrowed = true;
     }
     //Changes the book variable to it has been returned to the library
     //Renting and returning is for keeping the count of the books that is available in the specific library
-    public void returned(Book books){
-        books.borrowed = false;
+    public void returned(){
+        this.borrowed = false;
     }
     //checks if the book has been borrowed or not
     public boolean isBorrowed(){
@@ -28,4 +28,5 @@ public class Book {
         System.out.println("Borrowed? (should be true): " + example.isBorrowed());
         System.out.println("Borrowed? (should be false): " + example.isBorrowed());
     }
+
 }

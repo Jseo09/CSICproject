@@ -114,25 +114,20 @@ public class Library {
         //count[0] = available book && count[1] = total_books
         //for the book in the books array this will get the books with the same title that has not been borrowed already
         //If the books are founded, we set the find as true and set the founded book from the array as rented and break the loop
-        for (Book book : books) {
-            //if the books with the same title nad
-            if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
-                find = true;
-                book.rent(book);
-                counts[0] = counts[0] - 1;
-                break;
-            }
-        }
-        //this functions will show whether the books were successfully borrowed or not.
-        //If the book was not found as an available book, check if it is in the library by checking its title and state that
-        // it has been already borrowed and cannot borrow anymore.
-        //If it is not in the catalog, then it will print out that the book is not in the catalog
-        if (find) {
-            System.out.println("You successfully borrowed '" + bookTitle + "', remaining copies are " + counts[0]);
-        } else if (counts[0] == 0 && counts[1] > 0) {
-            System.out.println("Sorry, no more copies of '" + bookTitle + "' are available at this moment");
-        } else {
+        if (counts[1] == 0)
             System.out.println("The book '" + bookTitle + "' is not in our catalog.");
+        else if(counts[0] == 0)
+            System.out.println("Sorry, no more copies of '" + bookTitle + "' are available at this moment");
+        else if (counts[0] >=0){
+            for (Book book : books) {
+                //if the books with the same title and is borrowed
+                if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
+                    book.rent();
+                    counts[0] = counts[0]-1;
+                    System.out.println("You successfully borrowed '" + bookTitle + "', remaining copies are " + counts[0]);
+                    break;
+                }
+            }
         }
     }
     /**
@@ -196,7 +191,7 @@ public class Library {
         if (counts[0] < counts[1]) {
             for (Book book : books) {
                 if (book.getTitle().equals(bookTitle) && book.isBorrowed()) {
-                    book.returned(book);
+                    book.returned();
                     System.out.println("Returning " + bookTitle);
                     break;
                 }

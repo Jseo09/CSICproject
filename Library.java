@@ -118,7 +118,7 @@ public class Library {
             System.out.println("The book '" + bookTitle + "' is not in our catalog.");
         else if(counts[0] == 0)
             System.out.println("Sorry, no more copies of '" + bookTitle + "' are available at this moment");
-        else if (counts[0] >=0){
+        else {
             for (Book book : books) {
                 //if the books with the same title and is borrowed
                 if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {

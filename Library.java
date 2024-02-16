@@ -1,327 +1,304 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Library {
-    private final String ADDRESS;
-    private ArrayList<Book> books = new ArrayList<>();
+public class Main {
+	public static void main(String[] args) {
+		String directory = "C:/Users/seoji/Downloads/data (1)/data/tiny1.txt";
+		System.out.println("Question 1");
+		getMostWordCounts(directory);
+		System.out.println("Question 2");
+		getMostWordsForSpecificWord(directory,"the" );
+		getMostWordsForSpecificWord(directory, "of");
+		getMostWordsForSpecificWord(directory, "was");
+		forThePhase(directory, "but the");
+		forThePhase(directory,"it was");
+		forThePhase(directory,"in my");
+		highestFrequencyInSentence(directory);
+	}
+	/**
+	 ---------------------------------------------------------------
+	 AUTHOR:         JIN SEO
+	 CREATED DATE:   2024/2/15
+	 PURPOSE:        To find the most frequent words from the file
+	 PRECONDITIONS:  N/A
+	 POSTCONDITIONS: N/A
+	 ARGUMENTS:      Requires the file Directory(String) from the user
+	 DEPENDENCIES:   N/A
+	 ---------------------------------------------------------------
+	 */
+	private static void getMostWordCounts(String fileDirectory) {
+		int wordCount = 0;
+		ArrayStack<String> stack = new ArrayStack<>(10000);
+		ArrayStack<Integer> counts = new ArrayStack<>(10000);
+		try (BufferedReader reader = new BufferedReader(new FileReader(fileDirectory))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				Pattern pattern = Pattern.compile("\\b\\w+\\b");
+				Matcher matcher = pattern.matcher(line);
 
+				while (matcher.find()) {
+					String word = matcher.group().toLowerCase();
+					int index = indexOfWord(stack, word, wordCount);
+					if (index == -1) {
+						stack.push(word);
+						counts.push(1);
+						wordCount++;
+					} else {
+						counts.setIndex(index, counts.getIndex(index) + 1); // Update count for existing word
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int maxIndex = 0;
+		ArrayStack<Integer> indexKeeper = new ArrayStack<>(100);
+		for (int i = 1; i < wordCount; i++) {
+			if (counts.getIndex(i) > counts.getIndex(maxIndex)) {
+				maxIndex = i;
+				indexKeeper.empty();
+			}
+			if (counts.getIndex(i).equals(counts.getIndex(maxIndex))){
+				indexKeeper.push(i);
+			}
 
-    /**
-     ---------------------------------------------------------------
-     AUTHOR:         JIN SEO
-     CREATED DATE:   2023/11/15
-     PURPOSE:        Basic constructor for the library class; This will create the library with the specific address given
-     PRECONDITIONS:  N/A
-     POSTCONDITIONS: Constructs the library object
-     ARGUMENTS:      Requires the String address from the user
-     DEPENDENCIES:   N/A
-     ---------------------------------------------------------------
-     */
-    public Library(String address) {
-        this.ADDRESS = address;
-    }
-    /**
-     ---------------------------------------------------------------
-     AUTHOR:         JIN SEO
-     CREATED DATE:   2023/11/15
-     PURPOSE:        Basic constructor for the library class; This will create the library with the specific address given and get the book titles from file_title that is given
-                    by the users
-     PRECONDITIONS:  Change the file directory inside of the method for the successful compile
-     POSTCONDITIONS: Library object is constructed with specific file for the books
-     ARGUMENTS:      Requires the String address from the user and the file title from the user
-     DEPENDENCIES:   addBooksFromCSV method
-     ---------------------------------------------------------------
-     */
-    public Library(String address, String file_title) {
-        this.ADDRESS = address;
-        /*
-        !!!!IMPORTANT!!!!
-        Change this directory since the file directory depends on csv file locations
-        */
-        String file_directory = "out/production/Project_for_CSIC/out/production/Project_for_CSIC/" + file_title;
-        addBooksFromCSV(file_directory);
+		}
 
-    }
-    /**
-     ---------------------------------------------------------------
-     AUTHOR:         JIN SEO
-     CREATED DATE:   2023/11/15
-     PURPOSE:        To add the book object into the book array
-     PRECONDITIONS:  Must have the book array
-     POSTCONDITIONS: Adds additional book object
-     ARGUMENTS:      Requires the Book type object
-     DEPENDENCIES:   add method
-     ---------------------------------------------------------------
-     */
-
-    public void addBook(Book book) {
-        books.add(book);
-    }
-    /**
-     --------------------------------------------------------------
-     AUTHOR:         JIN SEO & Juliet
-     CREATED DATE:   2023/11/15
-     PURPOSE:        The method will count those books that has matching bookTitles
-     PRECONDITIONS:  Requires the book array
-     POSTCONDITIONS: @return the counts to the functions
-     ARGUMENTS:      Requires the Book type object
-     DEPENDENCIES:   add method
-
-     Example: The Lord of the Rings, remaining numbers of copies : 0
-     used the get count method professor suggested for us
-     ---------------------------------------------------------------
-     */
-
-    /*this is counting the books that is available
-     */
-    public int[] get_count(String bookTitle) {
-        int availableCount = 0;
-        int totalCount = 0;
-
-        for (Book book : books) {
-            if (book.getTitle().equals(bookTitle)) {
-                totalCount++;
-                if (!book.isBorrowed()) {
-                    availableCount++;
-                }
-            }
-        }
-        int[] counts = {availableCount, totalCount};
-        return counts;
-    }
-
-    /**
-    ---------------------------------------------------------------
-    AUTHOR:         JIN SEO
-    CREATED_DATE:   2023/10/25
-    PURPOSE:        Method will borrow the book from the library
-    PRECONDITIONS:  Must have at least one library object instanciated
-    POSTCONDITIONS: Will remove one book object count with the same title with the argument String, therefore, when counting,the book will not be counted anymore unless it is returned
-    ARGUMENTS:      Requires String "Booktitle"  Can be NULL
-    DEPENDENCIES:   Method getCount
-
-    Example:
-    You successfully borrowed 'The Lord of the Rings', remaining copies are 1
-    You successfully borrowed 'The Lord of the Rings', remaining copies are 0
-    -----------------------------------------------------------------
-    */
-    // modified borrowBook method in order to use the updated get count method and handle the array of the two integers correctly
-    public void borrowBook(String bookTitle) {
-        boolean find = false;
-        //this will receive the available book's counts
-        int[] counts = get_count(bookTitle);
-        //count[0] = available book && count[1] = total_books
-        //for the book in the books array this will get the books with the same title that has not been borrowed already
-        //If the books are founded, we set the find as true and set the founded book from the array as rented and break the loop
-        if (counts[1] == 0)
-            System.out.println("The book '" + bookTitle + "' is not in our catalog.");
-        else if(counts[0] == 0)
-            System.out.println("Sorry, no more copies of '" + bookTitle + "' are available at this moment");
-        else {
-            for (Book book : books) {
-                //if the books with the same title and is borrowed
-                if (book.getTitle().equals(bookTitle) && !book.isBorrowed()) {
-                    book.rent();
-                    counts[0] = counts[0]-1;
-                    System.out.println("You successfully borrowed '" + bookTitle + "', remaining copies are " + counts[0]);
-                    break;
-                }
-            }
-        }
-    }
-    /**
-     ---------------------------------------------------------------
-     AUTHOR:         JIN SEO
-     CREATED_DATE:   2023/10/25
-     PURPOSE:        Method will print the available book in the arraylist
-     PRECONDITIONS:  Must have at least one library object and book array instanciated
-     POSTCONDITIONS: No Change
-     ARGUMENTS:      N/A
-     DEPENDENCIES:   Method get_count
-
-     Example:
-     Foundations of Human Sociality, remaining numbers of copies : 1
-     Halting Degradation of Natural Resources, remaining numbers of copies : 1
-     -----------------------------------------------------------------
-     */
-    // This will print the available books in the arraylist.
-    // also modified this method to use the updated get count method
-    public void printAvailableBooks() {
-        // this will keep the title of the books so when program print out the left over available book counts for specific book title,
-        ArrayList<String> used = new ArrayList<>();
-        for (Book book : books) {
-            String bookTitle = book.getTitle();
-            // Get the available book counts
-            int[] count = get_count(book.getTitle());
-            // if the book title is not duplicate, get the book title and put it with the count
-            if (!used.contains(bookTitle)) {
-                used.add(bookTitle);
-                System.out.println(bookTitle + ", remaining numbers of copies : " + count[0]);
-            }
-        }
-        // if there is no book, there is no book in catalog
-        if (used.isEmpty())
-            System.out.println("No book in catalog");
-    }
-
-    public void printAddress() {
-        System.out.println(ADDRESS);
-    }
+		ArrayStack<Integer> indexForThird = new ArrayStack<>(100);
+		//For the Second question
+		int firstHighestIndex = 0;
+		int secondHighestIndex = 0;
+		int thirdHighestIndex = 0;
+		for(int i = 1; i < wordCount; i++){
+			if(counts.getIndex(i) > counts.getIndex(firstHighestIndex)){
+				thirdHighestIndex = secondHighestIndex;
+				secondHighestIndex = firstHighestIndex;
+				firstHighestIndex = i;
+			}
+			else if(counts.getIndex(i) > counts.getIndex(secondHighestIndex)){
+				thirdHighestIndex = secondHighestIndex;
+				secondHighestIndex = i;
+			}
+			else if (counts.getIndex(i) > counts.getIndex(i)){
+				thirdHighestIndex = i;
+			}
+		}
+		//For getting same amount
+		for (int i = 0; i < wordCount; i++) {
+			if (counts.getIndex(i) == counts.getIndex(thirdHighestIndex)) {
+				indexForThird.push(i);
+			}
+		}
 
 
-    /**
-     ---------------------------------------------------------------
-     AUTHOR: Hayden Sutton & Jin Seo
-     CREATED_DATE: 2023/11/05
-     PURPOSE: The method will return the borrowed book to the library
-     PRECONDITIONS: Must have at least one library object instantiated and an array of book objects
-     POSTCONDITIONS: Updates the status of the book object as returned and increments the count of available copies
-     ARGUMENTS: Requires String "bookTitle" which is the title of the book to return. Can be NULL.
-     DEPENDENCIES: Relies on method get_count to get the current count of books and whether the book is borrowed
-
-     Example:
-     Returning 'The Lord of the Rings'
-     You successfully returned the book, 'The Lord of the Rings.' The current copies of the book are: 2
-    ---------------------------------------------------------------
-    */
-    //method to return the book to the library/
-    public void returnBook(String bookTitle) {
-        int[] counts = get_count(bookTitle);
-        if (counts[0] < counts[1]) {
-            for (Book book : books) {
-                if (book.getTitle().equals(bookTitle) && book.isBorrowed()) {
-                    book.returned();
-                    System.out.println("Returning " + bookTitle);
-                    break;
-                }
-            }
-            System.out.println("You successfully returned the book, " + "'" + bookTitle + ".'" + "The current copies of the book are : " + (counts[0] + 1));
-        } else {
-            System.out.println("Book was not borrowed or is not in the catalog.");
-        }
-    }
 
 
-    /**
-     ---------------------------------------------------------------
-     AUTHOR: JIN SEO using ChatGPT
-     CREATED_DATE: 2023/10/25
-     PURPOSE: This method reads data from a CSV file containing a list of book titles and their respective number of copies, and returns it as a list of string arrays.
-     PRECONDITIONS: The CSV file must be in the correct format with two fields per line, the first being the book title and the second the number of copies.
-     POSTCONDITIONS: Produces a list where each element is a string array of two elements: the book title and the number of copies available.
-     ARGUMENTS: String "filename" which is the path to the CSV file containing the book inventory.
-     DEPENDENCIES: Relies on Java's IO classes for reading the file contents.
+		//Printing here
+		if(indexKeeper.getSizeOfWords() >= 1){
+			for(int i = 0; i < indexKeeper.getSizeOfWords(); i ++) {
+				System.out.println("The most frequent word(s) in the file is(are) : " + stack.getIndex(indexKeeper.getIndex(i)));
+				System.out.println("Frequency: " + counts.getIndex(maxIndex));
+			}
+		}
+		System.out.println("*************************************************");
+		System.out.println("*************************************************");
 
-     Example:
-     For a CSV file 'CATALOG.csv' with the content:
-     "The Countess of Huntingdon's Connexion",1
-     "Economic Organizations and Corporate Governance in Japan",2
-     The call readCSV("library_inventory.csv") will return:
-     [["The Countess of Huntingdon's Connexion", "1"], ["Economic Organizations and Corporate Governance in Japan", "2"]]
-    ---------------------------------------------------------------
-    */
-    //From ChatGPT to import CSV file into the java file
-    private List<String[]> readCSV(String filename) {
-        List<String[]> data = new ArrayList<>();
-        //reads each line of the CSV file using BufferReader
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            //when they did not finish reading the line
-            while ((line = br.readLine()) != null) {
-                // Split the line into an array of values using a comma as the delimiter
-                String[] values = line.split(",");
-                data.add(values);
-            }
-            //catch the exceptions, and print the error if it happens
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return data;
-    }
 
-    /**
-     ---------------------------------------------------------------
-     AUTHOR:         JIN SEO using ChatGPT
-     CREATED_DATE:   2023/10/25
-     PURPOSE:        This method reads data from a CSV file and adds books to a collection based on the information in the CSV.
-     PRECONDITIONS:  CSV file should be specified(fileDirectory should exist), CSV file should have rows with at least two elements: title and counts
-     POSTCONDITIONS: Books from the CSV file are added to the collection
-     ARGUMENTS:      fileDirectory: the directory path of the CSV file containing the book information
-     DEPENDENCIES:   readCSV method, Book class should be defined, addBook method should be defined
 
-     -----------------------------------------------------------------
-     */
-    private void addBooksFromCSV(String fileDirectory) {
-        //get the data from the method redCSV, and create list out of it
-        List<String[]> csvData = readCSV(fileDirectory);
+		System.out.println("The 3rd most frequent words in the file are:");
+		while (!indexForThird.isEmpty()) {
+			int index = indexForThird.pop();
+			System.out.println("The most frequent word(s) in the file is(are) : " + stack.getIndex(index) + " \nFrequency: " + counts.getIndex(index));
+			System.out.println("*************************************************");
+		}
 
-        for (String[] row : csvData) {
-            if (row.length >= 2) {
-                String bookTitle = row[0];
-                //parse the integer
-                int count = Integer.parseInt(row[1]);
 
-                for (int i = 0; i < count; i++) {
-                    Book book = new Book(bookTitle);
-                    addBook(book);
-                }
-            }
-        }
-    }
 
-    public static void printOpeningHours() {
-        System.out.println("Libraries are open daily from 9am to 5pm.\n");
-    }
+	}
+	/**
+	 ---------------------------------------------------------------
+	 AUTHOR:         JIN SEO
+	 CREATED DATE:   2024/2/15
+	 PURPOSE:        To find the sentence that uses user's input mostly.
+	 PRECONDITIONS:  N/A
+	 POSTCONDITIONS: N/A
+	 ARGUMENTS:      Requires the file Directory(String) from the user and target word
+	 DEPENDENCIES:   N/A
+	 ---------------------------------------------------------------
+	 */
+	public static void getMostWordsForSpecificWord(String fileDirectory, String word) {
+		ArrayStack<String> sentenceWithMaxOccurrences = new ArrayStack<>(10000);
+		int maxOccurrences = 0;
+		try (BufferedReader reader = new BufferedReader(new FileReader(fileDirectory))) {
+			StringBuilder textBuilder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				textBuilder.append(line).append("\n"); // Ensure newline characters are retained
+			}
 
-    public static void main(String[] args) {
-        // Create libraries
-        System.out.println();
-        Library firstLibrary = new Library("10 Main St.");
-        Library secondLibrary = new Library("228 Liberty St.");
-        Library thirdLibrary = new Library("12 Broadway St.", "catalog.csv");
+			// Split text into paragraphs based on consecutive newline characters
+			String[] paragraphs = textBuilder.toString().split("(?m)(?=\\n\\s*\\n)");
 
-        // Add four books to the first library
-        firstLibrary.addBook(new Book("The Da Vinci Code"));
-        firstLibrary.addBook(new Book("The Da Vinci Code")); // second copy
-        firstLibrary.addBook(new Book("Le Petit Prince"));
-        firstLibrary.addBook(new Book("A Tale of Two Cities"));
-        firstLibrary.addBook(new Book("The Lord of the Rings"));
-        firstLibrary.addBook(new Book("The Lord of the Rings")); // second copy
+			for (String paragraph : paragraphs) {
+				// Split paragraph into sentences
+				String[] sentences = paragraph.trim().split("(?<=[.!?\\n])\\s+");
 
-        // Print opening hours and the addresses
-        System.out.println("Library hours:");
-        printOpeningHours();
-        System.out.println();
-        System.out.println("Library addresses:");
-        firstLibrary.printAddress();
-        secondLibrary.printAddress();
-        thirdLibrary.printAddress();
-        System.out.println();
+				Pattern pattern = Pattern.compile("\\b" + word + "\\b", Pattern.CASE_INSENSITIVE);
 
-        // Try to borrow The Lords of the Rings from both libraries
-        firstLibrary.borrowBook("The Lord of the Rings");
-        firstLibrary.borrowBook("The Lord of the Rings");
-        firstLibrary.borrowBook("The Lord of the Rings");
-        System.out.println();
+				for (String sentence : sentences) {
+					Matcher matcher = pattern.matcher(sentence);
+					int occurrences = 0;
+					while (matcher.find()) {
+						occurrences++;
+					}
+					if (occurrences > maxOccurrences) {
+						maxOccurrences = occurrences;
+						sentenceWithMaxOccurrences.empty(); // Clear the stack
+						sentenceWithMaxOccurrences.push(sentence.trim()); // Trim to remove leading/trailing whitespace
+					} else if (occurrences == maxOccurrences) {
+						sentenceWithMaxOccurrences.push(sentence.trim());
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (!sentenceWithMaxOccurrences.isEmpty()) {
+			int count = 1;
+			System.out.println("The most sentence(s) with the most word '" + word + "' is/are:");
+			while (!sentenceWithMaxOccurrences.isEmpty()) {
+				System.out.println("############ Sentence " + count + " ############ ");
+				System.out.println(sentenceWithMaxOccurrences.pop().replace(".", ""));
+				count++;
+			}
+			System.out.println("With the frequency of " + maxOccurrences);
+			System.out.println("*************************************************");
+		} else {
+			System.out.println("Was unable to find the sentence with the word: " + word);
+		}
+	}
+	/**
+	 ---------------------------------------------------------------
+	 AUTHOR:         JIN SEO
+	 CREATED DATE:   2024/2/16
+	 PURPOSE:        To find the sentence that uses user's input mostly.
+	 PRECONDITIONS:  N/A
+	 POSTCONDITIONS: N/A
+	 ARGUMENTS:      Requires the file Directory(String) from the user and target phase
+	 DEPENDENCIES:   N/A
+	 ---------------------------------------------------------------
+	 */
+	public static void forThePhase(String fileDirectory, String word) {
+		ArrayStack<String> sentenceWithMaxOccurrences = new ArrayStack<>(10000);
+		int maxOccurrences = 0;
+		try (BufferedReader reader = new BufferedReader(new FileReader(fileDirectory))) {
+			StringBuilder textBuilder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				textBuilder.append(line).append("\n"); // Ensure newline characters are retained
+			}
 
-        // Print the titles of all available books from both libraries
-        System.out.println("Books available in the first library:");
-        firstLibrary.printAvailableBooks();
-        System.out.println();
-        System.out.println("Books available in the second library:");
-        secondLibrary.printAvailableBooks();
-        System.out.println();
-        System.out.println("Books available in the third library:");
-        thirdLibrary.printAvailableBooks();
-        System.out.println();
+			// Split text into sentences based on periods, exclamation marks, question marks, and newlines occurring together
+			String[] sentences = textBuilder.toString().split("(?<=[.!?\\n]|^)(?!\\s*$)");
 
-        // Return The Lords of the Rings to the first library
-        firstLibrary.returnBook("The Lord of the Rings");
-        System.out.println();
-        // Print the titles of available from the first library
-        System.out.println("Books available in the first library:");
-        firstLibrary.printAvailableBooks();
-    }
 
+			Pattern pattern = Pattern.compile("\\b" + word.trim() + "\\b", Pattern.CASE_INSENSITIVE);
+
+			for (String sentence : sentences) {
+				Matcher matcher = pattern.matcher(sentence);
+				int occurrences = 0;
+				while (matcher.find()) {
+					occurrences++;
+				}
+				if (occurrences > maxOccurrences) {
+					maxOccurrences = occurrences;
+					sentenceWithMaxOccurrences.empty();
+					sentenceWithMaxOccurrences.push(sentence.trim()); // Trim to remove leading/trailing whitespace
+				} else if (occurrences == maxOccurrences) {
+					sentenceWithMaxOccurrences.push(sentence.trim());
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (!sentenceWithMaxOccurrences.isEmpty()) {
+			int count = 1;
+			System.out.println("The most sentence(s) with the most phrase '" + word + "' is/are:");
+			while (!sentenceWithMaxOccurrences.isEmpty()) {
+				String sentence = sentenceWithMaxOccurrences.pop();
+				// Check if the sentence contains the specified word before printing
+				if (sentence.toLowerCase().contains(word.toLowerCase())) {
+					System.out.println("############ Sentence " + count + " ############ ");
+					System.out.println(sentence.replaceAll("[.!?]$", "")); // Remove end punctuation
+					count++;
+				}
+			}
+			System.out.println("With the frequency of " + maxOccurrences);
+			System.out.println("*************************************************");
+		} else {
+			System.out.println("The phrase '" + word + "' is not found in the file.");
+			System.out.println("*************************************************");
+		}
+	}
+	public static void highestFrequencyInSentence(String fileDirectory){
+		ArrayStack<String> mostFrequentWords = new ArrayStack<>(100);
+		int maxFrequency = 0;
+		ArrayStack<String> sentencesWithFrequent = new ArrayStack<>(100);
+		try (BufferedReader reader = new BufferedReader(new FileReader(fileDirectory))) {
+			StringBuilder textBuilder = new StringBuilder();
+			String line;
+			//When there is line to read
+			while ((line = reader.readLine()) != null) {
+				textBuilder.append(line).append("\n"); // Ensure newline characters are retained
+			}
+			//FROM CHATGPT
+			String[] sentences = textBuilder.toString().split("(?<=[.!?\\n])\\s+(?!$)");
+			for (String sentence : sentences) {
+				//FROM CHATGPT
+				String[] words = sentence.split("\\s+");
+				for (String word : words) {
+					// Count occurrences of the word in the sentence
+					int count = 0;
+					Pattern pattern = Pattern.compile("\\b" + word + "\\b", Pattern.CASE_INSENSITIVE);
+					Matcher matcher = pattern.matcher(sentence);
+					while (matcher.find()) {
+						count++;
+					}
+					// Update most frequent words and their frequency if necessary
+					if (count > maxFrequency) {
+						maxFrequency = count;
+						mostFrequentWords.empty();
+						mostFrequentWords.push(word);
+						sentencesWithFrequent.empty();
+						sentencesWithFrequent.push(sentence);
+					} else if (count == maxFrequency) {
+						mostFrequentWords.push(word);
+						sentencesWithFrequent.push(sentence);
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if(!mostFrequentWords.isEmpty()){
+			System.out.println("words: " + mostFrequentWords.pop());
+			System.out.println("Frequency: " + maxFrequency);
+			System.out.println("Sentence: " + sentencesWithFrequent.pop());
+		}
+	}
+
+
+
+	private static int indexOfWord(ArrayStack<String> words, String word, int wordCount) {
+		for (int i = 0; i < wordCount; i++) {
+			if (words.getIndex(i).equals(word)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }
